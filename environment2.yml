@@ -1,4 +1,4 @@
-name: traffic
+name: spoofing
 channels:
   - conda-forge
   - defaults
