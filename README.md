@@ -11,7 +11,7 @@ This project focuses on detecting GPS spoofing attacks using machine learning te
 
 ## Installation
 ```bash
-git clone https://github.com/yourusername/gps_spoofing_detection.git
+git clone https://github.com/Pedro-Rocha12/gps_spoofing_detection.git
 cd gps_spoofing_detection
 pip install -r requirements.txt
 ```
