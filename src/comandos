@@ -1,0 +1,5 @@
+python src/train_iforest.py --train data/raw/tracks/train.npz --val data/raw/tracks/val.npz --out_dir models/iforest --contamination 0.01 --n_estimators 100
+
+python src/train_autoencoder.py --train data/raw/tracks/train.npz --val data/raw/tracks/val.npz --out_dir models/autoencoder --epochs 100 --batch_size 128 --threshold_percentile 98
+
+python src/train_ocsvm.py --train data/raw/tracks/train.npz --val   data/raw/tracks/val.npz --out_dir models/ocsvm --kernel rbf --nu 0.01 --gamma auto
