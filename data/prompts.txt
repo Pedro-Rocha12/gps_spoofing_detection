@@ -8,9 +8,9 @@ python visualize_tracks.py tracks/ --all --output todas_tracks.html
 
 python visualize_tracks.py tracks_filtradas/ --all --output tracks_filtradas.html
 
-python move_by_metrics.py path/para/tracks_dir path/para/saida/duracao_40_140min path/para/summary_metrics.csv duration_sec --min 2400 --max 8400
+python move_tracks_by_metrics.py path/para/tracks_dir path/para/saida/duracao_40_140min path/para/summary_metrics.csv duration_sec --min 2400 --max 8400
 
-python move_by_metrics.py tracks/ duracao_40_140min/ path/para/summary_metrics.csv duration_sec --min 2400 --max 8400
+python move_tracks_by_metrics.py tracks/ duracao_40_140min/ path/para/summary_metrics.csv duration_sec --min 2400 --max 8400
 
 python move_tracks_by_metrics.py tracks tracks_filtradas analises/all_20250622_120957/summary_metrics.csv duration_min --min 50 --max 150
 
@@ -20,4 +20,8 @@ python analysis_tracks.py tracks_filtradas/
 
 python split_tracks_stratified.py tracks_filtradas/ analises/all_20250622_123224_filtradas/summary_metrics.csv split_output --stratify_col duration_min --n_bins 5 --train_size 0.8 --val_size 0.1 --test_size 0.1
 
+Spoofed:
+python move_tracks_by_metrics.py tracks\ spoofed_tracks\ analises\all_20250622_151533_todas\summary_metrics.csv duration_min --max 50
+python move_tracks_by_metrics.py tracks\ spoofed_tracks\ analises\all_20250622_151533_todas\summary_metrics.csv duration_min --min 110
 
+python move_tracks.py tracks/ spoofed_tracks/ --files statevectors_e4988b_1711571170_1711577227.csv statevectors_e47f76_1711659314_1711665465.csv statevectors_e48396_1711574580_1711579933.csv

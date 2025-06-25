@@ -1,0 +1,47 @@
+python src/train_iforest.py --train data/raw/tracks/train.npz --val data/raw/tracks/val.npz --out_dir models/iforest --contamination 0.01 --n_estimators 100
+
+python src/train_autoencoder.py --train data/raw/tracks/train.npz --val data/raw/tracks/val.npz --out_dir models/autoencoder --epochs 100 --batch_size 128 --threshold_percentile 98
+
+python src/train_ocsvm.py --train data/raw/tracks/train.npz --val   data/raw/tracks/val.npz --out_dir models/ocsvm --kernel rbf --nu 0.01 --gamma auto
+
+python evaluate_models.py \
+  --good_dir tracks_filtradas \
+  --bad_dir  tracks_excluidas \
+  --scaler   data/raw/tracks/scaler.pkl \
+  --iforest  models/iforest/iso_forest.pkl \
+  --ocsvm    models/ocsvm/oc_svm.pkl \
+  --autoencoder models/autoencoder/autoencoder.h5 \
+  --ae_threshold models/autoencoder/threshold.json \
+  --output_dir evaluation_results
+
+python src/inference.py \
+  path/to/statevectors_abc.csv \
+  --scaler    data/raw/tracks/scaler.pkl \
+  --iforest   models/iforest/iso_forest.pkl \
+  --ocsvm     models/ocsvm/oc_svm.pkl \
+  --autoencoder models/autoencoder/autoencoder.h5 \
+  --ae_threshold models/autoencoder/threshold.json \
+  --out_dir   inference_results
+
+python src\train_iforest.py --train data\raw\tracks\train.npz --val data\raw\tracks\val.npz --test data\raw\tracks\test.npz --out_dir models\iforest --contamination 0.01 --n_estimators 100 --random_state 42
+
+python classify_routes.py tracks_filtradas --model models/iforest/iso_forest.pkl --scaler data/raw/tracks/scaler.pkl --thresh 0.05 --out_csv analysis/route_classification.csv
+
+# Plota as duas rotor juntas
+python visualize_tracks.py tracks_filtradas --files statevectors_e49a86_1711475645_1711489055.csv statevectors_e49a8a_1711546341_1711559500.csv --output spoofed_routes.html
+
+python src/classify_routes.py data/all_tracks --model models/iforest/iso_forest.pkl --scaler data/raw/tracks/scaler.pkl --thresh 0.95 --out_csv analysis/route_classification_dynamic.csv
+
+python prepare_npz_from_split.py
+
+python src\train_iforest.py --train split_output\train.npz --val split_output\val.npz --test split_output\test.npz --out_dir models\iforest --contamination 0.01 --n_estimators 100 --random_state 42
+
+python src\train_autoencoder.py --train split_output\train.npz --val split_output\val.npz --out_dir models\autoencoder --epochs 50 --batch_size 256 --threshold_percentile 99
+
+python src\train_ocsvm.py --train split_output\train.npz --val split_output\val.npz --out_dir models\ocsvm --kernel rbf --nu 0.01 --gamma auto
+
+python src\evaluate_models.py --test_dir split_output\test --spoofed_dir data\spoofed_tracks --scaler split_output\scaler.pkl --iforest models\iforest\iso_forest.pkl --ocsvm models\ocsvm\oc_svm.pkl --autoencoder models\autoencoder\autoencoder.keras --ae_threshold models\autoencoder\threshold.json --output_dir evaluation_plots --labels IsolationForest OC-SVM Autoencoder
+
+python src\evaluate_models.py --test_dir data\split\test --spoofed_dir data\spoofed_tracks --scaler split_output\scaler.pkl --iforest models\iforest\iso_forest.pkl --ocsvm models\ocsvm\oc_svm.pkl --autoencoder models\autoencoder\autoencoder.keras --ae_threshold models\autoencoder\threshold.json --output_dir evaluation_plots --labels IsolationForest OC-SVM 
+
+python src\evaluation_routes.py --split split_output/test.npz --spoofed_dir data/spoofed_tracks --scaler split_output/scaler.pkl --iforest models/iforest/iso_forest.pkl --ocsvm models/ocsvm/oc_svm.pkl --autoencoder  models/autoencoder/autoencoder.keras --ae_threshold models/autoencoder/threshold.json --threshold 0.05 --out_dir route_evaluation
